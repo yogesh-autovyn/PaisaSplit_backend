@@ -1,0 +1,96 @@
+import * as dotenv from 'dotenv';
+import * as path from 'path';
+import {
+  getOsEnv,
+  getOsEnvOptional,
+  getOsPath,
+  getOsPaths,
+  normalizePort,
+  toBool,
+  toNumber,
+} from './lib/env';
+
+dotenv.config({
+  path: path.join(process.cwd(), `.env${process.env.NODE_ENV === 'test' ? '.test' : ''}`),
+});
+
+export const env = {
+  node: process.env.NODE_ENV || 'development',
+  isProduction: process.env.NODE_ENV === 'production',
+  isTest: process.env.NODE_ENV === 'test',
+  isDevelopment: process.env.NODE_ENV === 'development',
+  emailUsername: getOsEnv('EMAIL_USERNAME'),
+  emailPassword: getOsEnv('EMAIL_PASSWORD'),
+  // emailHost: getOsEnv('EMAIL_HOST'),
+  // emailPort: toNumber(getOsEnv('EMAIL_PORT')),
+  // emailFrom: getOsEnv('FORM_EMAIL'),
+  // JWT_SECRET: getOsEnv('JWT_SECRET'),
+  app: {
+    name: getOsEnv('APP_NAME'),
+    port: normalizePort(process.env.PORT || getOsEnv('APP_PORT')),
+    schema: getOsEnv('APP_SCHEMA'),
+    host: getOsEnv('APP_HOST'),
+    routePrefix: getOsEnv('APP_ROUTE_PREFIX'),
+    // ENCRYPTION_KEY: getOsEnv('ENCRYPTION_KEY'),
+    banner: toBool(getOsEnv('APP_BANNER')),
+    baseUrl: `${getOsEnv('APP_SCHEMA')}://${getOsEnv('APP_HOST')}${getOsEnv('SWAGGER_PORT') ? `:${normalizePort(process.env.PORT || getOsEnv('APP_PORT'))}` : ''}${getOsEnv('APP_ROUTE_PREFIX')}`,
+    // baseUrl: `${getOsEnv('APP_SCHEMA')}://${getOsEnv('APP_HOST')}${getOsEnv('APP_ROUTE_PREFIX')}`,
+    dirs: {
+      migrations: getOsPaths('TYPEORM_MIGRATIONS'),
+      migrationsDir: getOsPath('TYPEORM_MIGRATIONS_DIR'),
+      seeds: getOsPaths('TYPEORM_SEEDERS'),
+      seedsDir: getOsPath('TYPEORM_SEEDERS_DIR'),
+      entities: getOsPaths('TYPEORM_ENTITIES'),
+      entitiesDir: getOsPath('TYPEORM_ENTITIES_DIR'),
+      controllers: getOsPaths('CONTROLLERS'),
+      middlewares: getOsPaths('MIDDLEWARES'),
+      interceptors: getOsPaths('INTERCEPTORS'),
+      subscribers: getOsPaths('SUBSCRIBERS'),
+      subscribersDir: getOsPaths('SUBSCRIBERS_DIR'),
+      resolvers: getOsPaths('RESOLVERS'),
+    },
+  },
+  log: {
+    level: getOsEnv('LOG_LEVEL'),
+    json: toBool(getOsEnvOptional('LOG_JSON')),
+    output: getOsEnv('LOG_OUTPUT'),
+  },
+  db: {
+    type: getOsEnv('TYPEORM_CONNECTION'),
+    host: getOsEnvOptional('TYPEORM_HOST'),
+    port: toNumber(getOsEnvOptional('TYPEORM_PORT')),
+    username: getOsEnvOptional('TYPEORM_USERNAME'),
+    password: getOsEnvOptional('TYPEORM_PASSWORD'),
+    database: getOsEnv('TYPEORM_DATABASE'),
+    synchronize: toBool(getOsEnvOptional('TYPEORM_SYNCHRONIZE')),
+    logging: getOsEnv('TYPEORM_LOGGING'),
+    logger: getOsEnv('TYPEORM_LOGGER'),
+    url: getOsEnvOptional('TYPEORM_DB_URL'),
+  },
+  redis: {
+    enabled: toBool(getOsEnv('REDIS_ENABLED')),
+    host: getOsEnv('REDIS_HOST'),
+    port: toNumber(getOsEnv('REDIS_PORT')),
+    password: getOsEnv('REDIS_PASSWORD'),
+    db: toNumber(getOsEnv('REDIS_DB')),
+    keyPrefix: getOsEnv('REDIS_KEY_PREFIX'),
+  },
+  swagger: {
+    enabled: toBool(getOsEnv('SWAGGER_ENABLED')),
+    route: getOsEnv('SWAGGER_ROUTE'),
+    username: getOsEnv('SWAGGER_USERNAME'),
+    password: getOsEnv('SWAGGER_PASSWORD'),
+    port: getOsEnvOptional('SWAGGER_PORT'),
+  },
+  monitor: {
+    enabled: toBool(getOsEnv('MONITOR_ENABLED')),
+    route: getOsEnv('MONITOR_ROUTE'),
+    username: getOsEnv('MONITOR_USERNAME'),
+    password: getOsEnv('MONITOR_PASSWORD'),
+  },
+  // socket: {
+  //   enabled: toBool(getOsEnv('SOCKET_ENABLED')),
+  //   route: getOsEnv('SOCKET_ROUTE'),
+  //   port: getOsEnvOptional('SOCKET_PORT'),
+  // },
+};
