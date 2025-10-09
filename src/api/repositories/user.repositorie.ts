@@ -10,4 +10,12 @@ export const userRepository = dataSource.getMongoRepository(User).extend({
   async saveUser(user: User): Promise<User> {
     return await this.save(user);
   },
+
+  async findByEmail(email: string): Promise<User | null> {
+    return await this.findOne({ where: { email } });
+  },
+
+  async updatePassword(userId: string, password: string): Promise<void> {
+    await this.update(userId, { password });
+  },
 });
